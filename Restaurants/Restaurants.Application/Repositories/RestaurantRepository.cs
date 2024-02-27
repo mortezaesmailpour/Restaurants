@@ -1,9 +1,4 @@
 ﻿using Restaurants.Application.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Restaurants.Application.Repositories;
 
@@ -16,7 +11,7 @@ internal class RestaurantRepository : IRestaurantRepository
         return Task.FromResult(true);
     }
 
-    public Task<Restaurant?> GetById(Guid id)
+    public Task<Restaurant?> GetByIdAsync(Guid id)
     {
         var restaurant = _restaurants.FirstOrDefault(x => x.Id == id);
         return Task.FromResult(restaurant);

@@ -1,6 +1,6 @@
 ﻿namespace Restaurants.Contracts.Responses;
 
-public class RestaurantRespons
+public class RestaurantResponse
 {
     public required Guid Id { get; init; }
     public required string Name { get; init; }
