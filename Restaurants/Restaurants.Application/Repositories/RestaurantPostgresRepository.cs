@@ -83,7 +83,7 @@ public class RestaurantPostgresRepository(IDbConnectionFactory dbConnectionFacto
 
     }
 
-    public async Task<bool> UpdateAsynce(Restaurant restaurant)
+    public async Task<bool> UpdateAsync(Restaurant restaurant)
     {
         using var connection = await _dbConnectionFactory.CreateConnectionAsync();
         using var transaction = connection.BeginTransaction();
@@ -126,7 +126,7 @@ public class RestaurantPostgresRepository(IDbConnectionFactory dbConnectionFacto
         return result > 0;
     }
 
-    public async Task<bool> ExistsAsync(Guid id)
+    public async Task<bool> ExistsByIdAsync(Guid id)
     {
         using var connection = await _dbConnectionFactory.CreateConnectionAsync();
 

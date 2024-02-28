@@ -22,7 +22,7 @@ internal class RestaurantRepository : IRestaurantRepository
         return Task.FromResult(_restaurants.AsEnumerable());
     }
 
-    public Task<bool> UpdateAsynce(Restaurant restaurant)
+    public Task<bool> UpdateAsync(Restaurant restaurant)
     {
         var restaurantIndex = _restaurants.FindIndex(x => x.Id == restaurant.Id);
         if (restaurantIndex == -1)
@@ -35,5 +35,11 @@ internal class RestaurantRepository : IRestaurantRepository
     {
         var removedCount = _restaurants.RemoveAll(x => x.Id == id);
         return Task.FromResult(removedCount > 0);
+    }
+
+    public Task<bool> ExistsByIdAsync(Guid id)
+    {
+        var restaurantIndex = _restaurants.FindIndex(x => x.Id == id);
+        return Task.FromResult(restaurantIndex != -1);
     }
 }

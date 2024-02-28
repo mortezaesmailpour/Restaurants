@@ -1,24 +1,18 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Restaurants.Api.Mapping;
-using Restaurants.Application.Repositories;
+using Restaurants.Application.Services;
 using Restaurants.Contracts.Requests;
 
 namespace Restaurants.Api.Controllers;
 
 [ApiController]
-public class RestaurantController : ControllerBase
+public class RestaurantController(IRestaurantService restaurantService) : ControllerBase
 {
-    private readonly IRestaurantRepository _restaurantRepository;
-
-    public RestaurantController(IRestaurantRepository restaurantRepository)
-    {
-        _restaurantRepository = restaurantRepository;
-    }
     [HttpPost(ApiEndpoints.Restaurant.Create)]
     public async Task<IActionResult> Create([FromBody] CreateRestaurantRequest request)
     {
         var restaurant = request.MapToRestaurant();
-        await _restaurantRepository.CreateAsync(restaurant);
+        await restaurantService.CreateAsync(restaurant);
         var response = restaurant.MapToResponse();
         return CreatedAtAction(nameof(Get), new { id = restaurant.Id }, response);
         //return Created($"{ApiEndpoints.Restaurant.Create}/{restaurant.Id}", response);
@@ -27,7 +21,7 @@ public class RestaurantController : ControllerBase
     [HttpGet(ApiEndpoints.Restaurant.Get)]
     public async Task<IActionResult> Get([FromRoute] Guid id)
     {
-        var restaurant = await _restaurantRepository.GetByIdAsync(id);
+        var restaurant = await restaurantService.GetByIdAsync(id);
         if (restaurant is null)
             return NotFound();
         var response = restaurant.MapToResponse();
@@ -37,7 +31,7 @@ public class RestaurantController : ControllerBase
     [HttpGet(ApiEndpoints.Restaurant.GetAll)]
     public async Task<IActionResult> GetAll()
     {
-        var restaurants = await _restaurantRepository.GetAllAsync();
+        var restaurants = await restaurantService.GetAllAsync();
         var response = restaurants.MapToResponse();
         return Ok(response);
     }
@@ -46,8 +40,8 @@ public class RestaurantController : ControllerBase
     public async Task<IActionResult> Update([FromRoute] Guid id, [FromBody] UpdateRestaurantRequest request)
     {
         var restaurant = request.MapToRestaurant(id);
-        var updated = await _restaurantRepository.UpdateAsynce(restaurant);
-        if (!updated)
+        var updatedRestaurant = await restaurantService.UpdateAsync(restaurant);
+        if (updatedRestaurant is null)
             return NotFound();
         var response = restaurant.MapToResponse();
         return Ok(response);
@@ -56,7 +50,7 @@ public class RestaurantController : ControllerBase
     [HttpDelete(ApiEndpoints.Restaurant.Delete)]
     public async Task<IActionResult> Delete([FromRoute] Guid id)
     {
-        var deleted = await _restaurantRepository.DeleteAsync(id);
+        var deleted = await restaurantService.DeleteAsync(id);
         if (!deleted)
             return NotFound();
         return Ok();

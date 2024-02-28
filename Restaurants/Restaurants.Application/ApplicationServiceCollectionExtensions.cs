@@ -1,6 +1,7 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Restaurants.Application.Database;
 using Restaurants.Application.Repositories;
+using Restaurants.Application.Services;
 
 namespace Restaurants.Application;
 
@@ -9,6 +10,7 @@ public static class ApplicationServiceCollectionExtensions
     public static IServiceCollection AddApplication(this IServiceCollection services)
     {
         services.AddSingleton<IRestaurantRepository,RestaurantPostgresRepository>();
+        services.AddSingleton<IRestaurantService, RestaurantService>();
         return services;
     }
 
