@@ -67,19 +67,19 @@ public class RestaurantPostgresRepository(IDbConnectionFactory dbConnectionFacto
                 restaurant.Features.Add(feature);
         }
         return restaurants;
-        
-        //var result = await connection.QueryAsync(new CommandDefinition("""
-        //    select r.*, string_agg(f.name , ',') as features
-        //    from restaurants r left join features f on f.restaurantId = r.id
-        //    group by id
-        //    """));
-        //return result.Select(x => new Restaurant()
-        //{
-        //    Id = x.id,
-        //    Name = x.name,
-        //    YearStarted = x.yearstarted,
-        //    Features = Enumerable.ToList(x.features.split(',')),
-        //});
+
+        var result = await connection.QueryAsync(new CommandDefinition("""
+            select r.*, string_agg(f.name , ',') as features
+            from restaurants r left join features f on f.restaurantId = r.id
+            group by id
+            """));
+        return result.Select(x => new Restaurant()
+        {
+            Id = x.id,
+            Name = x.name,
+            YearStarted = x.yearstarted,
+            Features = Enumerable.ToList(x.features.split(',')),
+        });
 
     }
 

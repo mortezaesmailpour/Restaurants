@@ -1,7 +1,9 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using FluentValidation;
+using Microsoft.Extensions.DependencyInjection;
 using Restaurants.Application.Database;
 using Restaurants.Application.Repositories;
 using Restaurants.Application.Services;
+using Restaurants.Application.Validators;
 
 namespace Restaurants.Application;
 
@@ -11,6 +13,7 @@ public static class ApplicationServiceCollectionExtensions
     {
         services.AddSingleton<IRestaurantRepository,RestaurantPostgresRepository>();
         services.AddSingleton<IRestaurantService, RestaurantService>();
+        services.AddValidatorsFromAssemblyContaining<RestaurantValidator>(ServiceLifetime.Singleton);
         return services;
     }
 

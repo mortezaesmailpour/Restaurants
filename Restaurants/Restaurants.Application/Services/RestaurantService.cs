@@ -1,13 +1,15 @@
-﻿using Restaurants.Application.Models;
+﻿using FluentValidation;
+using Restaurants.Application.Models;
 using Restaurants.Application.Repositories;
 
 namespace Restaurants.Application.Services;
 
-public class RestaurantService(IRestaurantRepository restaurantRepository) : IRestaurantService
+public class RestaurantService(IRestaurantRepository restaurantRepository, IValidator<Restaurant> restaurantValidator) : IRestaurantService
 {
-    public Task<bool> CreateAsync(Restaurant restaurant)
+    public  async Task<bool> CreateAsync(Restaurant restaurant)
     {
-        return restaurantRepository.CreateAsync(restaurant);
+        await restaurantValidator.ValidateAndThrowAsync(restaurant);
+        return await restaurantRepository.CreateAsync(restaurant);
     }
 
     public Task<Restaurant?> GetByIdAsync(Guid id)
@@ -22,6 +24,7 @@ public class RestaurantService(IRestaurantRepository restaurantRepository) : IRe
 
     public async Task<Restaurant?> UpdateAsync(Restaurant restaurant)
     {
+        await restaurantValidator.ValidateAndThrowAsync(restaurant);
         var restaurantExists = await restaurantRepository.ExistsByIdAsync(restaurant.Id);
         if (!restaurantExists)
             return null;
