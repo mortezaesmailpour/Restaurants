@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
+using Restaurants.Api;
 using Restaurants.Api.Mapping;
 using Restaurants.Application;
 using Restaurants.Application.Database;
@@ -27,7 +28,12 @@ builder.Services.AddAuthentication(x =>
     };
 });
 
-builder.Services.AddAuthorization();
+builder.Services.AddAuthorizationBuilder()
+    .AddPolicy(AuthConstants.AdminUserPolicyName, p => p.RequireClaim(AuthConstants.AdminUserClaimName, "true"))
+    .AddPolicy(AuthConstants.TrustedMemberPolicyName, p => p.RequireAssertion(c =>
+        c.User.HasClaim(m => m is { Type: AuthConstants.AdminUserClaimName, Value: "true" }) ||
+        c.User.HasClaim(m => m is { Type: AuthConstants.TrustedMemberClaimName , Value: "true" })
+        ));
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();

@@ -10,6 +10,7 @@ namespace Restaurants.Api.Controllers;
 [ApiController]
 public class RestaurantController(IRestaurantService restaurantService) : ControllerBase
 {
+    [Authorize(AuthConstants.TrustedMemberPolicyName)]
     [HttpPost(ApiEndpoints.Restaurant.Create)]
     public async Task<IActionResult> Create([FromBody] CreateRestaurantRequest request, CancellationToken cancellationToken)
     {
@@ -20,6 +21,7 @@ public class RestaurantController(IRestaurantService restaurantService) : Contro
         //return Created($"{ApiEndpoints.Restaurant.Create}/{restaurant.Id}", response);
     }
 
+    [Authorize(AuthConstants.TrustedMemberPolicyName)]
     [HttpGet(ApiEndpoints.Restaurant.Get)]
     public async Task<IActionResult> Get([FromRoute] Guid id)
     {
@@ -38,6 +40,7 @@ public class RestaurantController(IRestaurantService restaurantService) : Contro
         return Ok(response);
     }
 
+    [Authorize(AuthConstants.TrustedMemberPolicyName)]
     [HttpPut(ApiEndpoints.Restaurant.Update)]
     public async Task<IActionResult> Update([FromRoute] Guid id, [FromBody] UpdateRestaurantRequest request)
     {
@@ -49,6 +52,7 @@ public class RestaurantController(IRestaurantService restaurantService) : Contro
         return Ok(response);
     }
 
+    [Authorize(AuthConstants.AdminUserPolicyName)]
     [HttpDelete(ApiEndpoints.Restaurant.Delete)]
     public async Task<IActionResult> Delete([FromRoute] Guid id)
     {
