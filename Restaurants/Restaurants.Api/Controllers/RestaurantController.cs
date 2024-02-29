@@ -1,10 +1,12 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Restaurants.Api.Mapping;
 using Restaurants.Application.Services;
 using Restaurants.Contracts.Requests;
 
 namespace Restaurants.Api.Controllers;
 
+[Authorize]
 [ApiController]
 public class RestaurantController(IRestaurantService restaurantService) : ControllerBase
 {
