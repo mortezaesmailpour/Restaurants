@@ -6,7 +6,7 @@ namespace Restaurants.Api.Mapping;
 
 public static class ContractMapping
 {
-    public static Restaurant MapToRestaurant(this CreateRestaurantRequest request) 
+    public static Restaurant MapToRestaurant(this CreateRestaurantRequest request)
         => new()
         {
             Id = Guid.NewGuid(),

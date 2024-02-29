@@ -9,7 +9,7 @@ namespace Restaurants.Api.Controllers;
 public class RestaurantController(IRestaurantService restaurantService) : ControllerBase
 {
     [HttpPost(ApiEndpoints.Restaurant.Create)]
-    public async Task<IActionResult> Create([FromBody] CreateRestaurantRequest request)
+    public async Task<IActionResult> Create([FromBody] CreateRestaurantRequest request, CancellationToken cancellationToken)
     {
         var restaurant = request.MapToRestaurant();
         await restaurantService.CreateAsync(restaurant);

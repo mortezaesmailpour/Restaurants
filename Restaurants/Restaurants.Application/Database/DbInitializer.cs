@@ -1,9 +1,4 @@
 ﻿using Dapper;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Restaurants.Application.Database;
 
@@ -21,6 +16,7 @@ public class DbInitializer(IDbConnectionFactory dbConnectionFactory)
             name TEXT not null,
             yearstarted integer not null);
         """);
+
         await connection.ExecuteAsync("""
             create table if not exists features (
             restaurantId UUID references restaurants (id),
