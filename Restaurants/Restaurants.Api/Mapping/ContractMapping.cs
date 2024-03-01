@@ -27,6 +27,8 @@ public static class ContractMapping
         {
             Id = restaurant.Id,
             Name = restaurant.Name,
+            Rating = restaurant.Rating,
+            UserRating = restaurant.UserRating,
             YearStarted = restaurant.YearStarted,
             Features = restaurant.Features,
         };
@@ -35,4 +37,10 @@ public static class ContractMapping
         {
             Items = restaurants.Select(MapToResponse)
         };
+    public static IEnumerable<RestaurantRatingResponse> MapToResponse(this IEnumerable<RestaurantRating> ratings)
+        => ratings.Select(x => new RestaurantRatingResponse()
+        {
+            RestaurantId = x.RestaurantId,
+            Rating = x.Rating
+        });
 }

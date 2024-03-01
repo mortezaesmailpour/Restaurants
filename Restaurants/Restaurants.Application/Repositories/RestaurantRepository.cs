@@ -11,10 +11,10 @@ internal class RestaurantRepository : IRestaurantRepository
         return Task.FromResult(true);
     }
 
-    public Task<Restaurant?> GetByIdAsync(Guid id, CancellationToken token = default) 
+    public Task<Restaurant?> GetByIdAsync(Guid id, Guid? userId = default, CancellationToken token = default) 
         => Task.FromResult(_restaurants.FirstOrDefault(x => x.Id == id));
 
-    public Task<IEnumerable<Restaurant>> GetAllAsync(CancellationToken token = default) 
+    public Task<IEnumerable<Restaurant>> GetAllAsync(Guid? userId = default, CancellationToken token = default) 
         => Task.FromResult(_restaurants.AsEnumerable());
 
     public Task<bool> UpdateAsync(Restaurant restaurant, CancellationToken token = default)

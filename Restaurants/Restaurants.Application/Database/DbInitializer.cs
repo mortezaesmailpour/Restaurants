@@ -12,15 +12,23 @@ public class DbInitializer(IDbConnectionFactory dbConnectionFactory)
 
         await connection.ExecuteAsync("""
             create table if not exists restaurants (
-            id UUID primary key,
-            name TEXT not null,
+            id uuid primary key,
+            name text not null,
             yearstarted integer not null);
         """);
 
         await connection.ExecuteAsync("""
             create table if not exists features (
-            restaurantId UUID references restaurants (id),
-            name TEXT not null);
+            restaurantid uuid references restaurants (id),
+            name text not null);
+            """);
+
+        await connection.ExecuteAsync("""
+            create table if not exists ratings (
+            userid uuid,
+            restaurantid UUID references restaurants (id),
+            rating integer not null,
+            primary key (userid, restaurantid));
             """);
     }
 }

@@ -1,4 +1,4 @@
-﻿namespace Restaurants.Api;
+﻿namespace Restaurants.Api.Auth;
 
 public static class AuthConstants
 {

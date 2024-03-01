@@ -27,45 +27,57 @@ public class RestaurantPostgresRepository(IDbConnectionFactory dbConnectionFacto
         return result > 0;
     }
 
-    public async Task<Restaurant?> GetByIdAsync(Guid id, CancellationToken token = default)
+    public async Task<Restaurant?> GetByIdAsync(Guid id, Guid? userId = default, CancellationToken token = default)
     {
         using var connection = await dbConnectionFactory.CreateConnectionAsync(token);
 
         var restaurant = await connection.QuerySingleOrDefaultAsync<Restaurant>(new CommandDefinition("""
-            select * from restaurants where id = @Id
-            """, new { Id = id }));
+            select r.* , round(avg(ra.rating), 1) as rating, myra.rating as userrating
+            from restaurants r
+            left join ratings ra on r.id = ra.restaurantid
+            left join ratings myra on r.id = myra.restaurantid and myra.userid = @userId
+            where id = @id
+            group by id, userrating
+            """, new { id , userId }));
 
         if (restaurant is null)
             return null;
-
         var features = await connection.QueryAsync<string>(new CommandDefinition("""
-            select name from features where restaurantId = @Id
-            """, new { Id = id }));
+            select name 
+            from features 
+            where restaurantId = @id
+            """, new { id }));
         
         foreach (var feature in features)
             restaurant.Features.Add(feature);
-
         return restaurant;
     }
 
-    public async Task<IEnumerable<Restaurant>> GetAllAsync(CancellationToken token = default)
+    public async Task<IEnumerable<Restaurant>> GetAllAsync(Guid? userId = default, CancellationToken token = default)
     {
         using var connection = await dbConnectionFactory.CreateConnectionAsync(token);
 
         var result = await connection.QueryAsync(new CommandDefinition("""
-            select r.*, string_agg(f.name , ',') as features
-            from restaurants r left join features f on f.restaurantId = r.id
-            group by id
-            """));
+            select r.*, 
+                string_agg(distinct f.name , ',') as features,
+                round(avg(ra.rating), 1) as rating, 
+                myra.rating as userrating
+            from restaurants r 
+            left join features f on r.id = f.restaurantId 
+            left join ratings ra on r.id = ra.restaurantid
+            left join ratings myra on r.id = myra.restaurantid and myra.userid = @userId
+            group by id, userrating
+            """, new { userId }, cancellationToken: token));
 
         return result.Select(x => new Restaurant()
         {
             Id = x.id,
             Name = x.name,
             YearStarted = x.yearstarted,
+            Rating = (float?)x.rating,
+            UserRating = (int?)x.userrating,
             Features = Enumerable.ToList(x.features.Split(',')),
         });
-
     }
 
     public async Task<bool> UpdateAsync(Restaurant restaurant, CancellationToken token = default)
@@ -100,11 +112,13 @@ public class RestaurantPostgresRepository(IDbConnectionFactory dbConnectionFacto
         using var transaction = connection.BeginTransaction();
 
         await connection.ExecuteAsync(new CommandDefinition("""
-            delete from features where restaurantid = @id
+            delete from features 
+            where restaurantid = @id
             """, new { id }, cancellationToken: token));
 
         var result = await connection.ExecuteAsync(new CommandDefinition("""
-            delete from restaurants where id = @id
+            delete from restaurants 
+            where id = @id
             """, new { id }, cancellationToken: token));
 
         transaction.Commit();
@@ -116,7 +130,9 @@ public class RestaurantPostgresRepository(IDbConnectionFactory dbConnectionFacto
         using var connection = await dbConnectionFactory.CreateConnectionAsync(token);
 
         return await connection.ExecuteScalarAsync<bool>(new CommandDefinition("""
-            select count(1) from restaurants where id = @id
+            select count(1) 
+            from restaurants 
+            where id = @id
             """, new { Id = id }, cancellationToken: token));
     }
 }

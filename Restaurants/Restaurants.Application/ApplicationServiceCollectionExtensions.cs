@@ -11,7 +11,9 @@ public static class ApplicationServiceCollectionExtensions
 {
     public static IServiceCollection AddApplication(this IServiceCollection services)
     {
-        services.AddSingleton<IRestaurantRepository,RestaurantPostgresRepository>();
+        services.AddSingleton<IRatingRepository,RatingPostgresRepository>();
+        services.AddSingleton<IRatingService, RatingService>();
+        services.AddSingleton<IRestaurantRepository, RestaurantPostgresRepository>();
         services.AddSingleton<IRestaurantService, RestaurantService>();
         services.AddValidatorsFromAssemblyContaining<RestaurantValidator>(ServiceLifetime.Singleton);
         return services;

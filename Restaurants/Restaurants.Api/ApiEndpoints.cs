@@ -12,5 +12,14 @@ public static class ApiEndpoints
         public const string GetAll = Base;
         public const string Update = Get;
         public const string Delete = Get;
+
+        public const string Rate = $"{Get}/ratings";
+        public const string DeleteRating = Rate;
+    }
+    public static class Ratings
+    {
+        private const string Base = $"{ApiBase}/ratings";
+
+        public const string GetUserRatings = $"{Base}/me";
     }
 }

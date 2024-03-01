@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
-using Restaurants.Api;
+using Restaurants.Api.Auth;
 using Restaurants.Api.Mapping;
 using Restaurants.Application;
 using Restaurants.Application.Database;
